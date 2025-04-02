@@ -12,6 +12,26 @@ class: center, middle, inverse, small-images
 
 ---
 
+### Your Hosts
+
+<div style="display: flex; justify-content: center; gap: 20px;">
+    <div style="text-align: center;">
+        <img src="./assets/andre.jpeg" style="height: 150px;">
+        <p><strong>Andre Moreira</strong><br>Software Engineer @ VertsaPlay</p>
+    </div>
+    <div style="text-align: center;">
+        <img src="./assets/eduardo.jpeg" style="height: 150px;">
+        <p><strong>Eduardo Guedes</strong><br>Software Engineer @ VertsaPlay</p>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 80px;">
+    <img src="./assets/vertsa.jpeg" style="width: 400px;">
+</div>
+
+---
+
+
 class: center, middle, inverse
 
 ## Don't let this be a monologue
@@ -28,17 +48,6 @@ class: center, middle, inverse
 - Easy to learn
 
 <img src="./assets/flutter_arch.png" style="width: 100%;">
-
----
-
-### Your Hosts
-
-Software Engineers at Vertsa
-
-
-<img src="./assets/andre.png" style="width: 100%;">
-<img src="./assets/.png" style="width: 100%;">
-<img src="./assets/vertsa.png" style="width: 100%;">
 
 ---
 
@@ -70,6 +79,243 @@ void main() {
 ```
 
 ---
+
+class: center, middle
+
+# Basic Types in Go
+
+---
+
+## Integers (int, uint)
+
+- `int` (signed integers, platform-dependent size)
+- `int8`, `int16`, `int32`, `int64` (fixed-size signed integers)
+- `uint` (unsigned integers, platform-dependent size)
+- `uint8` (alias for `byte`), `uint16`, `uint32`, `uint64` (fixed-size unsigned integers)
+- Used for counting, indexing, and mathematical operations
+
+```go
+var a int = 42
+var b uint = 100
+var c int64 = -5000
+fmt.Println(a, b, c)
+```
+
+---
+
+## Floating Point Numbers
+
+- `float32` (single precision, ~7 decimal digits)
+- `float64` (double precision, ~15 decimal digits)
+- Used for precise mathematical calculations and measurements
+
+```go
+var pi float64 = 3.14159
+var temp float32 = 36.6
+fmt.Println(pi, temp)
+```
+
+---
+
+## Strings
+
+- Immutable sequence of bytes
+- Supports UTF-8 encoding
+- Can be concatenated using `+`
+- Length can be determined using `len()`
+- Characters can be accessed as bytes
+
+```go
+var name string = "GoLang"
+fmt.Println(len(name))  // String length
+fmt.Println(name[0])    // Access character (byte)
+fmt.Println(name + " is awesome!")
+```
+
+---
+
+## Arrays
+
+- Fixed-size collection of elements of the same type
+- Cannot be resized after declaration
+- Not commonly used
+
+```go
+var arr [5]int = [5]int{1, 2, 3, 4, 5}
+fmt.Println(arr)
+fmt.Println(len(arr))  // Get the length of the array
+```
+
+---
+
+## Slices
+
+- Dynamic array with flexible length
+- Built-in functions: `append()`, `len()`, `cap()`, `copy()`
+- More powerful than arrays as they can grow dynamically
+
+```go
+nums := []int{1, 2, 3}
+nums = append(nums, 4, 5)  // Adding elements
+fmt.Println(nums)          // [1 2 3 4 5]
+fmt.Println(len(nums))     // Length of slice
+fmt.Println(cap(nums))     // Capacity of slice
+```
+
+---
+
+class: center, middle
+
+# Structs in Go
+class: center, middle
+
+
+---
+
+## Basics of Structs
+
+- Custom data types with named fields
+- Used to define objects with multiple properties
+
+```go
+type UrlResponse struct {
+    Url          string
+    StatusCode   uint
+    ResponseBody string
+    Error        string
+}
+
+response := UrlResponse{Url: "https://example.com", StatusCode: 200, ResponseBody: "Hello, World!", Error: ""}
+fmt.Println(response.Url, response.StatusCode)
+```
+
+---
+
+## Constructors in Go
+
+- Go does **not** have traditional constructors like other languages.
+- A common convention is to use a function named `NewObject` (e.g., `NewUrlResponse`) to initialize and return a new instance of a struct.
+- This allows encapsulation and validation before object creation.
+
+```go
+type UrlResponse struct {
+    Url          string
+    StatusCode   uint
+    ResponseBody string
+    Error        string
+}
+
+// NewUrlResponse acts as a constructor function
+func NewUrlResponse(url string, statusCode uint) *UrlResponse {
+    return &UrlResponse{
+      Url: url, 
+      StatusCode: statusCode, 
+    }
+}
+
+func main() {
+    response := NewUrlResponse("https://example.com", 200, "Success", "")
+    fmt.Println(response.Url)  // Works
+    // Other operations with response
+}
+```
+
+---
+
+## Public and Private Fields
+
+- Visibility of fields in Go is determined by their casing:
+- **Public**: Fields starting with an uppercase letter are accessible outside the package.
+- **Private**: Fields starting with a lowercase letter are only accessible within the same package.
+- Private fields promote encapsulation and better struct design.
+
+```go
+type UrlResponse struct {
+    Url          string // Public field
+    statusCode   uint   // Private field
+    ResponseBody string // Public field
+    error        string // Private field
+}
+
+func NewUrlResponse(url string, statusCode uint, responseBody string, err string) *UrlResponse {
+    return &UrlResponse{Url: url, statusCode: statusCode, ResponseBody: responseBody, error: err}
+}
+
+func main() {
+    response := NewUrlResponse("https://example.com", 200, "Success", "")
+    fmt.Println(response.Url)          // Works
+    fmt.Println(response.ResponseBody) // Works
+    // fmt.Println(response.statusCode) // Does not work (private field)
+    // fmt.Println(response.error)      // Does not work (private field)
+}
+```
+
+---
+
+## Struct Methods
+
+- Fields can be accessed using dot notation
+- Supports methods to define behavior
+
+```go
+type UrlResponse struct {
+    Url          string
+    StatusCode   uint
+    ResponseBody string
+    Error        string
+}
+
+func (r UrlResponse) Info() string {
+    return fmt.Sprintf("URL: %s, Status: %d", r.Url, r.StatusCode)
+}
+
+// Syntactic Sugar for the following
+func Info(r UrlResponse) string {
+    return fmt.Sprintf("URL: %s, Status: %d", r.Url, r.StatusCode)
+}
+
+response := UrlResponse{Url: "https://api.example.com", StatusCode: 200, ResponseBody: "Success", Error: ""}
+fmt.Println(response.Info())
+```
+
+---
+
+## Struct Methods: Pointer receivers
+
+- Beware for pointer receiver!
+
+```go
+type UrlResponse struct {
+    Url          string
+    StatusCode   uint
+    ResponseBody string
+    Error        string
+}
+
+// This will update the instance
+func (r *UrlResponse) UpdateStatus(statusCode uint) {
+    r.StatusCode = statusCode
+}
+
+// This will update a copy the instance which is not returned
+// Useless
+func (r UrlResponse) UpdateStatusCopy(statusCode uint) {
+    r.StatusCode = statusCode
+}
+
+func main() {
+    response := UrlResponse{Url: "https://api.example.com", StatusCode: 200, ResponseBody: "Success", Error: ""}
+    
+    response.UpdateStatusCopy(404)
+    fmt.Println(response.StatusCode) // Still 200
+    
+    response.UpdateStatus(404)
+    fmt.Println(response.StatusCode) // Now 404
+}
+```
+
+---
+
 
 ### More on null-safety
 
