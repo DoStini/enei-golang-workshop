@@ -386,15 +386,70 @@ class: center, middle, inverse
 
 #### Simple URL checker
 
+---
+
+## URL Checker Project
+
+#### Overview
+
+A lightweight utility tool that validates URLs by checking their response status codes and storing the results in a map data structure for easy lookup. This tool reads target URLs from an array and processes them to determine their availability.
+
+#### Features
+
+- Checks HTTP response status codes for a collection of URLs
+- Stores results in a map with URL as the key
+- Returns both status code and a descriptive message for each URL
+- Simple interface for batch URL validation
 
 ---
 
-## Struct Methods: Pointer receivers
+## URL Checker Project
 
-- Beware for pointer receiver!
+### Technical Specifications
+
+#### Input
+- Array of URL strings to validate
+
+#### Output
+- Map data structure where:
+  - Key: URL string
+  - Value: Object containing:
+    - `statusCode`: HTTP response status code (e.g., 200, 404, 500)
+    - `message`: Description of the result (e.g., "OK", "Not Found", "Server Error")
 
 ---
 
-class: center, middle, inverse
+## URL Checker Project
 
-### Thank you for your attention :)
+#### Implementation Details
+- Uses asynchronous HTTP requests to check URLs
+- Store various HTTP status codes appropriately
+- Implements proper error handling for network issues or invalid URLs
+- Designed for efficiency with multiple URL validations
+
+#### Use Cases
+- Website monitoring
+- Link validation in web applications
+- API endpoint verification
+- Content availability checking
+
+---
+
+## URL Checker Project
+
+#### Implementation Details
+- Uses asynchronous HTTP requests to check URLs
+- Store various HTTP status codes appropriately
+- Implements proper error handling for network issues or invalid URLs
+- Designed for efficiency with multiple URL validations
+
+#### Use Cases
+- Website monitoring
+- Link validation in web applications
+- API endpoint verification
+- Content availability checking
+
+---
+
+
+
