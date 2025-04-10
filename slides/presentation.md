@@ -5,9 +5,7 @@ class: center, middle, inverse, small-images
 ### An introduction to Golang and concurrency
 
 <div style="display: flex; justify-content: center; margin-top: 3em; align-items: center; gap: 1em;">
-<img src="./assets/.png">
-<div style="font-size: 2.5em; padding-inline: 0.5em;">❤️</div>
-<img src="./assets/flutter-logo.png">
+<img src="./assets/go.jpg" style="width:450px">
 </div>
 
 ---
@@ -451,5 +449,37 @@ A lightweight utility tool that validates URLs by checking their response status
 
 ---
 
+class: center, middle, inverse
+
+## Concurrency
+
+#### Goroutines
+
+https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7f5c
+
+---
 
 
+## Goroutines are not OS threads!
+- Goroutines are lightweight "green threads" managed by the Go runtime
+- They have a small initial stack size (~2KB) compared to OS threads (~2MB)
+- Multiple goroutines share the same OS thread for execution
+- The Go runtime scheduler intelligently manages thousands of goroutines across available CPU cores
+- Goroutines communicate through channels, not shared memory, making concurrent programming safer
+
+---
+
+## Goroutine Scheduling
+- The Go scheduler employs a cooperative M:N scheduling model
+- M goroutines are run in N OS threads (typically matching CPU cores)
+- Context switching between goroutines is 10-100x faster than OS thread switching
+- The number of physical context switches is minimized, significantly improving overall performance
+- When a goroutine blocks on I/O, the scheduler automatically reassigns the OS thread to other goroutines
+- Go's runtime includes work-stealing algorithms to balance load across CPU cores
+- Goroutines scale efficiently: you can launch 100,000+ goroutines in a single program with minimal overhead
+
+---
+
+## Useful links
+
+- https://divan.dev/posts/go_concurrency_visualize/
