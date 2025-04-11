@@ -329,7 +329,7 @@ func (r *UrlResponse) UpdateStatus(statusCode uint) {
     r.StatusCode = statusCode
 }
 // This will update a copy the instance which is not returned
-// Only usefull in cases where you want to guarantee no side effects happen
+// Only useful in cases where you want to guarantee no side effects happen
 func (r UrlResponse) UpdateStatusCopy(statusCode uint) {
     r.StatusCode = statusCode
 }
@@ -383,7 +383,7 @@ func main() {
 
 class: center, middle, inverse
 
-## Usefull commands
+## Useful commands
 
 ---
 
@@ -490,7 +490,7 @@ class: center, middle, inverse
 
 ## Concurrency
 
-#### Goroutines
+#### Let's talk about Goroutines
 
 https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7f5c
 
@@ -502,20 +502,68 @@ https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7
 - They have a small initial stack size (~2KB) compared to OS threads (~2MB)
 - Multiple goroutines share the same OS thread for execution
 - The Go runtime scheduler intelligently manages thousands of goroutines across available CPU cores
-- Goroutines communicate through channels, not shared memory, making concurrent programming safer
 
 ---
 
 ## Goroutine Scheduling
 - The Go scheduler employs a cooperative M:N scheduling model
 - M goroutines are run in N OS threads (typically matching CPU cores)
-- Context switching between goroutines is 10-100x faster than OS thread switching
+- Context switching between goroutines is faster than OS thread switching
 - The number of physical context switches is minimized, significantly improving overall performance
 - When a goroutine blocks on I/O, the scheduler automatically reassigns the OS thread to other goroutines
 - Go's runtime includes work-stealing algorithms to balance load across CPU cores
 - Goroutines scale efficiently: you can launch 100,000+ goroutines in a single program with minimal overhead
 
 ---
+
+## Mini Project: Part 2
+
+---
+
+class: center, middle, inverse
+
+## More about Concurrency
+
+#### Some problems and solutions of concurrency
+
+---
+
+## Common Parallelism Problems
+
+- **Shared Resource Management**: Traditional threading uses mutex locks, semaphores, and complex synchronization solution
+- **Deadlocks & Livelocks**: Complex lock dependencies can lead to system freezes if not properly designed
+- **Synchronization Overhead**: Badly designed locking mechanisms can create performance bottlenecks
+
+---
+
+### Concurrency Good Practices
+
+- **Minimize shared state**:
+    - Share by communicating, not by sharing memory
+    - Avoids complex locking mechanisms, reducing the proneness to deadlocks
+- **Design for concurrency**:
+    - Break problems into independent, concurrent tasks
+    - Create clear ownership boundaries for data
+    - Use message passing patterns instead of shared memory when appropriate
+- **Balance concurrency levels**:
+    - Too few concurrent tasks underutilizes resources
+    - Too many can lead to context switching overhead
+    - Match concurrency to available hardware resources
+    - Consider workload characteristics when determining optimal concurrency
+
+---
+
+## Solutions that Go provides
+
+- Golang supports traditional mechanisms such as mutex, semaphores and condition variables
+- Golang has channels, which are a way for goroutines to communicate
+- This allows us to effectively improve our concurrency design by sharing through communication
+- With this pattern, we are reducing the proneness to deadlocks and race conditions
+- Channels make complex concurrency patterns easier to implement and understand
+
+---
+
+
 
 ## Useful links
 
