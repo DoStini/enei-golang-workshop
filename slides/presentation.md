@@ -210,7 +210,9 @@ type UrlResponse struct {
 response := UrlResponse{Url: "https://example.com", StatusCode: 200, ResponseBody: "Hello, World!", Error: ""}
 fmt.Println(response.Url, response.StatusCode)
 ```
+
 ---
+
 ## Ways to Initialize Structs
 - Go offers multiple ways to initialize structs without constructors:
 
@@ -417,7 +419,7 @@ class: center, middle, inverse
 
 class: center, middle, inverse
 
-## Mini Project 1
+## Mini Project: Part 1
 
 #### Simple URL checker
 
@@ -457,16 +459,14 @@ A lightweight utility tool that validates URLs by checking their response status
 ## URL Checker Project
 
 #### Implementation Details
-- Uses asynchronous HTTP requests to check URLs
+- Uses HTTP requests to check URLs
 - Store various HTTP status codes appropriately
 - Implements proper error handling for network issues or invalid URLs
-- Designed for efficiency with multiple URL validations
 
 #### Use Cases
 - Website monitoring
 - Link validation in web applications
 - API endpoint verification
-- Content availability checking
 
 ---
 
@@ -516,7 +516,78 @@ https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7
 
 ---
 
+## How to use goroutines?
+
+```go
+// Heavy Syncronous Methods
+func HeavyComputation() int {
+    time.Sleep(2 * time.Seconds)
+    return rand.Int()
+}
+
+func SendAlert() int {
+    emailer.SendMail()
+}
+
+
+// A heavy loop that iterates over multiple
+func MultipleHeavyComputation() {
+    results := []int{}
+    for i := range 30 {
+        // GO: with anonymous function call
+        go func() {
+            results = append(results)
+        }()
+
+        // GO: with just the method call
+        go SendAlert()
+    }
+}
+
+```
+
+
+---
+
+## How to coordinate goroutines?
+
+```go
+func MultipleHeavyComputation(size int) []uint {
+    var wg sync.WaitGroup
+    // Set initial WaitGroup counter to match total goroutines
+    wg.Add(size)
+    
+    results := make([]uint, size) // Pre-allocate slice with proper size
+    
+    for i := range size {
+        // GO: with anonymous function call
+        go func() {
+            // Ensure we decrement counter when done
+            defer wg.Done()
+
+            result := HeavyComputation(index)
+            
+            // Store at specific index to avoid race conditions
+            results[index] = result
+        }() // Pass i as parameter to avoid closure issues
+    }
+    
+    // Wait for all goroutines to complete
+    wg.Wait()
+    
+    return results
+}
+```
+
+
+---
+
 ## Mini Project: Part 2
+
+#### Enabling concurrency in our solution
+
+
+
 
 ---
 
@@ -561,8 +632,112 @@ class: center, middle, inverse
 - With this pattern, we are reducing the proneness to deadlocks and race conditions
 - Channels make complex concurrency patterns easier to implement and understand
 
+
+
+
+
 ---
 
+class: center, middle, inverse
+
+## More 
+
+#### Channels and other syncronization solutions
+
+---
+
+
+
+
+## Unbuffered Channels
+
+- Created with `ch := make(chan int)`
+- Synchronous communication: sender blocks until receiver is ready
+
+```go
+go func() { ch <- 42 }()  // Sends value to channel
+value := <-ch            // Receives value from channel
+```
+
+- Safe for coordination between multiple goroutines
+
+```go
+ch := make(chan int)
+go func() { 
+    ch <- 42 // Sends value to channel
+}()
+
+// One of the following goroutines will read the value 42
+
+// Worker 1
+go func() {
+    value := <-ch
+}()
+
+// Worker 2
+go func() {
+    value := <-ch
+}()
+
+```
+
+---
+
+## Buffered Channels
+- Created with `ch := make(chan int, capacity)`
+- Asynchronous until buffer fills: sender only blocks when buffer is full
+- Example:
+  ```go
+  ch := make(chan int, 2)
+  ch <- 1  // Doesn't block
+  ch <- 2  // Doesn't block
+  ch <- 3  // Blocks until someone reads from the channel and frees up space
+  ```
+
+---
+
+## Using select
+
+Select can be used for multiple channel operations:
+
+- Works like a switch statement but for channel operations
+- Allows waiting on multiple channel operations simultaneously
+- Blocks until one of the cases can proceed
+- If multiple cases are ready, one is chosen randomly
+- Non-blocking operations possible with `default` case
+
+### Example:
+```go
+select {
+case msg1 := <-channel1:
+    fmt.Println("Received from channel 1:", msg1)
+case msg2 := <-channel2:
+    fmt.Println("Received from channel 2:", msg2)
+}
+```
+
+### Common Use Cases:
+- Implementing timeouts for channel operations
+- Preventing deadlocks by avoiding indefinite waits
+- Fan-in pattern: combining multiple input channels
+- Load balancing among multiple worker goroutines
+- Graceful termination with done channels
+
+---
+
+## Avoiding Deadlocks
+
+- Deadlock risk: When all goroutines are blocked waiting for channel operations
+- Common deadlock scenarios:
+  - Writing to unbuffered channel with no readers
+  - Writing to a full buffered channel with no readers
+  - Reading from empty channel with no writers
+- Best practices:
+  - Close channels when no more data will be sent
+  - Use `select` with timeout for potentially blocking operations
+  - Consider buffered channels when senders and receivers operate at different rates
+
+---
 
 
 ## Useful links
