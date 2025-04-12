@@ -462,6 +462,13 @@ class: center, middle, inverse
 
 ---
 
+## Other useful commands
+
+- race
+- benchmark
+
+---
+
 
 
 class: center, middle, inverse
