@@ -81,9 +81,11 @@ class: center, middle, inverse
 
 ---
 class: center, middle
-class: center, middle
+
 # Basic Types in Go
+
 ---
+
 ## Integers (int, uint)
 - `int` (signed integers, platform-dependent size)
 - `int8`, `int16`, `int32`, `int64` (fixed-size signed integers)
@@ -94,46 +96,60 @@ class: center, middle
 var a int = 42
 var b uint = 100
 var c int64 = -5000
+f := 42 // Another way to more cleanly define a new variable
 fmt.Println(a, b, c)
 ```
+
 ---
+
 ## Floating Point Numbers
+
 - `float32` (single precision, ~7 decimal digits)
 - `float64` (double precision, ~15 decimal digits)
 - Used for precise mathematical calculations and measurements
+
 ```go
 var pi float64 = 3.14159
 var temp float32 = 36.6
 fmt.Println(pi, temp)
 ```
+
 ---
+
 ## Strings
 - Immutable sequence of bytes
 - Supports UTF-8 encoding
 - Can be concatenated using `+`
 - Length can be determined using `len()`
 - Characters can be accessed as bytes
+
 ```go
 var name string = "GoLang"
 fmt.Println(len(name)) // String length
 fmt.Println(name[0]) // Access character (byte)
 fmt.Println(name + " is awesome!")
 ```
+
 ---
+
 ## Arrays
 - Fixed-size collection of elements of the same type
 - Cannot be resized after declaration
 - Not commonly used
+
 ```go
 var arr [5]int = [5]int{1, 2, 3, 4, 5}
 fmt.Println(arr)
 fmt.Println(len(arr)) // Get the length of the array
 ```
+
 ---
+
 ## Slices
 - Dynamic array with flexible length
 - Built-in functions: `append()`, `len()`, `cap()`, `copy()`
 - More powerful than arrays as they can grow dynamically
+
 ```go
 nums := []int{1, 2, 3}
 nums = append(nums, 4, 5) // Adding elements
@@ -141,25 +157,34 @@ fmt.Println(nums) // [1 2 3 4 5]
 fmt.Println(len(nums)) // Length of slice
 fmt.Println(cap(nums)) // Capacity of slice
 ```
+
 ---
+
 ## Maps
 - Key-value pairs (similar to dictionaries/hash tables in other languages)
 - Unordered collection of elements
 - Dynamic size (can grow and shrink)
 - Keys must be comparable types (string, int, etc.)
+
 ```go
 myMap := map[string]int{"one": 1, "two": 2}
 myMap["three"] = 3 // Add new element
+
 value, exists := myMap["key"] // Check if key exists
+
 delete(myMap, "one") // Remove element
+
 fmt.Println(len(myMap)) // Get the length of the map
 ```
+
 ---
+
 ## Pointers
 - Store memory addresses of variables
 - Allow passing references instead of values
 - Useful for modifying variables across functions and passing heavy structs
 - Zero value is nil
+
 ```go
 var x int = 10
 var p *int = &x // p holds memory address of x
@@ -167,21 +192,17 @@ fmt.Println(*p) // Dereferencing - prints 10
 *p = 20 // Modify value through pointer
 fmt.Println(x) // Prints 20
 ```
+
 ---
+
 ##Zero Values in Go
 
-- In Go, all declared variables are automatically initialized with their zero value
-
+- In Go, all declared variables are automatically initialized with their zero valu
 - This ensures no variable is ever undefined, preventing common bugs found in other languages
-
 - Zero values are type-specific and provide a safe starting state
-
 - For composite types, zero values follow a logical pattern (mostly nil)
-
 - This approach eliminates the need for manual initialization in many cases
-
 - Zero values also enable safe operations on uninitialized variables
-
 
 ```go
 var i int              // 0
@@ -249,11 +270,14 @@ responsePtr := new(UrlResponse)
 // All fields have zero values
 responsePtr.Url = "https://example.com"
 ```
----
+
+<!-- ---
+
 ## Constructors in Go
 - Go does **not** have traditional constructors like other languages.
 - A common convention is to use a function named `NewObject` (e.g., `NewUrlResponse`) to initialize and return a new instance of a struct.
 - This allows encapsulation and validation before object creation.
+
 ```go
 type UrlResponse struct {
     Url string
@@ -273,8 +297,11 @@ func main() {
     fmt.Println(response.Url) // Works
     // Other operations with response
 }
+
 ```
----
+
+--- -->
+
 ## Public and Private Fields
 - Visibility of fields in Go is determined by their casing:
 - **Public**: Fields starting with an uppercase letter are accessible outside the package.
@@ -299,6 +326,7 @@ func main() {
 ## Struct Methods
 - Fields can be accessed using dot notation
 - Supports methods to define behavior
+
 ```go
 type UrlResponse struct {
     Url string
@@ -306,19 +334,20 @@ type UrlResponse struct {
     ResponseBody string
     Error string
 }
+
 func (r *UrlResponse) Info() string {
     return fmt.Sprintf("URL: %s, Status: %d", r.Url, r.StatusCode)
 }
-// Syntactic Sugar for the following
-func Info(r UrlResponse) string {
-    return fmt.Sprintf("URL: %s, Status: %d", r.Url, r.StatusCode)
-}
+
 response := UrlResponse{Url: "https://api.example.com", StatusCode: 200}
+
 fmt.Println(response.Info())
 ```
 ---
 ## Struct Methods: Pointer receivers
+
 - Beware for pointer receiver!
+
 ```go
 type UrlResponse struct {
     Url string
@@ -326,15 +355,18 @@ type UrlResponse struct {
     ResponseBody string
     Error string
 }
+
 // This will update the instance
 func (r *UrlResponse) UpdateStatus(statusCode uint) {
     r.StatusCode = statusCode
 }
+
 // This will update a copy the instance which is not returned
 // Only useful in cases where you want to guarantee no side effects happen
 func (r UrlResponse) UpdateStatusCopy(statusCode uint) {
     r.StatusCode = statusCode
 }
+
 func main() {
     response := UrlResponse{StatusCode: 200}
     response.UpdateStatusCopy(404)
@@ -343,7 +375,7 @@ func main() {
     fmt.Println(response.StatusCode) // Now 404
 }
 ```
----
+<!-- ---
 ## Zero Values in Structs
 - Each field in a struct gets initialized to its zero value
 - This provides predictable default state for structs
@@ -380,6 +412,29 @@ func main() {
 ```
 
 - **Important**: While most zero values are safe to work with, nil maps and nil pointers require special attention to avoid runtime panics
+
+--- -->
+
+
+---
+class: center, middle
+
+## Golang good practices
+
+#### Keep it stupid simple
+
+---
+
+## Error handing
+
+- TODO
+
+
+---
+
+##  Defer
+
+- TODO
 
 ---
 
@@ -496,12 +551,35 @@ https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7
 
 ---
 
+## Concurrency?
+
+- Concurrency is everywhere:
+    - Mobile apps require background work while maintaining responsive UI
+    - Webservers handle thousands of concurrent connections
+
+- **Concurrency**: Dealing with multiple things at once (structure)
+- **Parallelism**: Doing multiple things at once (execution)
+
+<div style="text-align: center;">
+<img src="./assets/concurrency.webp" style="width: 400px;">
+</div>
+
+<div style="text-align: right; font-size: 0.8em;">
+<a href="https://osmh.dev/posts/goroutines-under-the-hood">
+ Source
+</a>
+</div>
+
+---
+
 
 ## Goroutines are not OS threads!
 - Goroutines are lightweight "green threads" managed by the Go runtime
 - They have a small initial stack size (~2KB) compared to OS threads (~2MB)
 - Multiple goroutines share the same OS thread for execution
 - The Go runtime scheduler intelligently manages thousands of goroutines across available CPU cores
+- Goroutines scale efficiently: you can launch 100,000+ goroutines in a single program with minimal overhead
+
 
 ---
 
@@ -509,10 +587,17 @@ https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7
 - The Go scheduler employs a cooperative M:N scheduling model
 - M goroutines are run in N OS threads (typically matching CPU cores)
 - Context switching between goroutines is faster than OS thread switching
-- The number of physical context switches is minimized, significantly improving overall performance
 - When a goroutine blocks on I/O, the scheduler automatically reassigns the OS thread to other goroutines
-- Go's runtime includes work-stealing algorithms to balance load across CPU cores
-- Goroutines scale efficiently: you can launch 100,000+ goroutines in a single program with minimal overhead
+
+<div style="text-align: center;">
+<img src="./assets/goroutines.png" style="width: 350px;">
+</div>
+
+<div style="text-align: right; font-size: 0.8em;">
+<a href="https://osmh.dev/posts/goroutines-under-the-hood">
+ Source
+</a>
+</div>
 
 ---
 
@@ -599,8 +684,11 @@ class: center, middle, inverse
 
 ---
 
-## Common Parallelism Problems
+## Common Parallelism Challenges
 
+TODO: imagens sobre condicoes de corrida
+
+- **Hard to test**: Concurrency is hard to test and debug, since bugs are usually non deterministic and might airse from specific timings
 - **Shared Resource Management**: Traditional threading uses mutex locks, semaphores, and complex synchronization solution
 - **Deadlocks & Livelocks**: Complex lock dependencies can lead to system freezes if not properly designed
 - **Synchronization Overhead**: Badly designed locking mechanisms can create performance bottlenecks
@@ -644,9 +732,8 @@ class: center, middle, inverse
 
 #### Channels and other syncronization solutions
 
+
 ---
-
-
 
 
 ## Unbuffered Channels
@@ -706,7 +793,6 @@ Select can be used for multiple channel operations:
 - If multiple cases are ready, one is chosen randomly
 - Non-blocking operations possible with `default` case
 
-### Example:
 ```go
 select {
 case msg1 := <-channel1:
@@ -716,30 +802,42 @@ case msg2 := <-channel2:
 }
 ```
 
-### Common Use Cases:
-- Implementing timeouts for channel operations
-- Preventing deadlocks by avoiding indefinite waits
-- Fan-in pattern: combining multiple input channels
-- Load balancing among multiple worker goroutines
-- Graceful termination with done channels
-
 ---
 
 ## Avoiding Deadlocks
 
-- Deadlock risk: When all goroutines are blocked waiting for channel operations
-- Common deadlock scenarios:
-  - Writing to unbuffered channel with no readers
-  - Writing to a full buffered channel with no readers
-  - Reading from empty channel with no writers
-- Best practices:
-  - Close channels when no more data will be sent
-  - Use `select` with timeout for potentially blocking operations
-  - Consider buffered channels when senders and receivers operate at different rates
+- Important to close channels
+- Never leave a goroutine with an infinite for loop
+    - That will lead to goroutine leaks
+    - Always use contexts or done channels to break out of the loop
+
+```go
+func worker(done <-chan struct{}, work <-chan int) {
+  for {
+    select {
+      case <-done:
+        return  // Exit cleanly when done
+      case task := <-work:
+        process(task)
+    }
+  }
+}
+```
 
 ---
 
+## Other amazing topics worth looking into
+
+- Modules
+- Struct composition
+- Interfaces
+- Reflection
+
+---
 
 ## Useful links
 
 - https://divan.dev/posts/go_concurrency_visualize/
+
+
+--- 
