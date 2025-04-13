@@ -859,12 +859,24 @@ func main(){
 }
 ```
 ---
-class: middle, center
+class: middle
 
 ## Demo time!
 
 ```bash
 cd project/examples/concurrency/01_routines
+```
+
+#### Run the program Synchronously
+
+``` bash
+go run main.go
+```
+
+#### Run the program Asynchronously
+
+``` bash
+go run main.go -concurrent
 ```
 
 ---
@@ -923,8 +935,29 @@ func main() {
     
 }
 ```
+---
+class: middle
+
+## Demo time!
+
+```bash
+cd project/examples/concurrency/02_waitgroups
+```
+
+#### Run the program without synchronization
+
+``` bash
+go run main.go
+```
+
+#### Run the program with Waitgroups Synchronization
+
+``` bash
+go run main.go -wg
+```
 
 ---
+
 
 class: center, middle, inverse
 
