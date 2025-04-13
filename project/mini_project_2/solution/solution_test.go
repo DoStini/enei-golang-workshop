@@ -2,11 +2,9 @@ package main
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
-func TestCheckUrls(t *testing.T) {
+func TestIterateOverUrlSync(t *testing.T) {
 	urls := []string{
 		"https://www.google.com",
 		"https://www.facebook.com",
@@ -22,34 +20,36 @@ func TestCheckUrls(t *testing.T) {
 		"https://www.twitter.com":     false,
 	}
 
-	got := CheckUrls(urls)
-	assert.EqualValues(t, len(expected), len(got))
+	got := iterateOverUrlSync(urls)
 
 	for key, value := range expected {
 		if got[key] != value {
-			t.Errorf("key %s :got %+v, expected %+v", key, got[key], value)
+			t.Errorf("got %+v, expected %+v", got[key], value)
 		}
 	}
 }
 
-func TestCheckUrlsMalformed(t *testing.T) {
+func TestIterateOverUrlAsync(t *testing.T) {
 	urls := []string{
-		"malfored url ",
-		"https://",
-		"what://?asd",
+		"https://www.google.com",
+		"https://www.facebook.com",
+		"https://www.example.com",
+		"https://www.twitter.com",
+		"https://blog.gypsydave5.com",
 	}
 	expected := map[string]bool{
-		"malfored url ": false,
-		"https://":      false,
-		"what://?asd":   false,
+		"https://www.google.com":      true,
+		"https://www.facebook.com":    true,
+		"https://www.example.com":     true,
+		"https://blog.gypsydave5.com": true,
+		"https://www.twitter.com":     false,
 	}
 
-	got := CheckUrls(urls)
-	assert.EqualValues(t, len(expected), len(got))
+	got := iterateOverUrlAsync(urls)
 
 	for key, value := range expected {
 		if got[key] != value {
-			t.Errorf("key %s :got %+v, expected %+v", key, got[key], value)
+			t.Errorf("got %+v, expected %+v", got[key], value)
 		}
 	}
 }

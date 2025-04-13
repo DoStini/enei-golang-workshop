@@ -27,7 +27,7 @@ func CheckUrlsSol(urls []string) map[string]bool {
 	return result
 }
 
-func mainSol() {
+func main() {
 	urls := []string{
 		"https://www.google.com",
 		"https://www.facebook.com",

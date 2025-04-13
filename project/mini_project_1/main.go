@@ -16,14 +16,14 @@ func main() {
 		"https://www.twitter.com",
 	}
 
-	// result := nil
-	// Task: Define a map here
+	// Task: Define a results map here
 
 	// Task: Loop through the URL's and gather their response
 	resp, _ := http.Get(urls[0])
 	// Task: Error handling
-	// Task: Defer the closure of the resp.Body to the end
+	// Task: Defer the closure of the resp.Body
 	// Task: Save in the map true if 200, false otherwise
+
 	fmt.Println(resp.StatusCode)
 
 	// Task: Print the result map

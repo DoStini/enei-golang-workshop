@@ -1019,22 +1019,37 @@ class: center, middle
 ---
 class: middle
 
-## Channels: Communication as Synchronization
+### Channels: Communication as Synchronization
 
 - Channels are typed conduits for sending and receiving values between goroutines
 - They handle both data transfer and synchronization
 - Designed to avoid race conditions through message passing
 - Make concurrent programming safer and more predictable
 
+<div style="text-align: right; font-size: 0.8em;">
+<a href="https://divan.dev/posts/go_concurrency_visualize/">
+ Vizualizing concurrency
+</a>
+</div>
+
+---
+
+class: middle
+### Channels: Communication as Synchronization
+
+- The arrow (<-) syntax indicates the direction of data flow
+- Sending to a channel: channel <- value
+- Receiving from a channel: value := <-channel
+
 ``` go
-
 func main(){
-
     // Create an unbuffered channel
     ch := make(chan int)
 
     // Send a value (blocks until someone receives)
-    go func() { ch <- 42 }()
+    go func() { 
+        ch <- 42 
+    }()
 
     // Receive a value (blocks until someone sends)
     value := <-ch
@@ -1042,11 +1057,6 @@ func main(){
 
 }
 ```
-<div style="text-align: right; font-size: 0.8em;">
-<a href="https://divan.dev/posts/go_concurrency_visualize/">
- Vizualizing concurrency
-</a>
-</div>
 
 ---
 
@@ -1129,12 +1139,107 @@ go run main.go -mutex
 
 class: center, middle, inverse
 
-## More about Concurrency
+## Hands-on: Mini Project 2
+#### Time to apply what you learned!
 
-#### Some problems and solutions of concurrency
+---
+class: middle
+
+### Problem: Check if multiple websites are available
+
+- Sequential approach is inefficient
+- Each request must wait for the previous one to complete
+- Total time = sum of all individual request times
+
+```go
+// Sequential approach
+func iterateOverUrlSync(urls []string) map[string]bool {
+    
+    result := make(map[string]bool)
+
+    for _, url := range urls {
+        resp, err := http.Get(url)
+        // Check response and update result
+        result[url] = resp.StatusCode == 200
+    }
+
+    return result
+}
+```
+---
+
+class: middle
+## Project Tasks
+
+#### Implement iterateOverUrlAsync function that:
+
+- Uses goroutines to make HTTP requests concurrently
+- Uses WaitGroup to wait for all requests to complete
+- Uses mutex to safely update the shared result map
+- Times individual requests and total execution time
+
+
+- Modify main() to use your async implementation
+- (Bonus) Create an alternative implementation using channels instead of mutex
+
+```bash
+cd project/mini_project_2
+
+# Implement your solution, then run:
+go run main.go
+```
+
+---
+class: middle
+
+##Expected Result
+
+- Concurrent execution should be significantly faster
+- Total time ≈ time of the slowest request (not the sum)
+- All URLs should be properly checked and results stored
 
 ---
 
+class: middle
+
+####Using Mutexes 
+
+```go
+govar mu sync.Mutex  // Protects the shared map
+go func(url string) {
+    defer wg.Done()
+    // Make HTTP request
+    mu.Lock()
+    result[url] = resp.StatusCode == 200
+    mu.Unlock()
+}(url)
+
+```
+
+####Using Channels (bonus):
+
+```go
+type urlResult struct {
+    url    string
+    status bool
+}
+resultCh := make(chan urlResult)
+
+go func(url string) {
+    // Make HTTP request
+    result := urlResult{
+        url: url,
+        status: resp.StatusCode == 200
+    }
+    resultCh <- result
+}(url)
+
+result := make(map[string]bool)
+for res := range resultCh {
+    result[res.url] = res.status
+}
+```
+---
 ## Common Concurrency Challenges
 
 - **Hard to test**: Concurrency is hard to test and debug, since bugs are usually non deterministic and might airse from specific timings
