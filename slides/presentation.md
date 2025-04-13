@@ -15,7 +15,7 @@ class: center, middle, inverse, small-images
 <div style="display: flex; justify-content: center; gap: 20px;">
     <div style="text-align: center;">
         <img src="./assets/andre.jpeg" style="height: 150px;">
-        <p><strong>Andre Moreira</strong><br>Software Engineer @ VertsaPlay</p>
+        <p><strong>André Moreira</strong><br>Software Engineer @ VertsaPlay</p>
     </div>
     <div style="text-align: center;">
         <img src="./assets/eduardo.jpeg" style="height: 150px;">
@@ -23,9 +23,14 @@ class: center, middle, inverse, small-images
     </div>
 </div>
 
-<div style="text-align: center; margin-top: 80px;">
+<div style="text-align: center; margin-top: 50px;">
     <img src="./assets/vertsa.jpeg" style="width: 400px;">
 </div>
+
+<div style="text-align: center; margin-top: 50px;">
+    <img src="./assets/alumniei.png" style="width: 400px;">
+</div>
+
 
 ---
 
@@ -80,7 +85,7 @@ class: center, middle, inverse
 - **Command-line Tools**: Fast execution and single binary deployment
 
 ---
-class: center, middle
+class: center, middle, inverse
 
 # Basic Types in Go
 
@@ -97,6 +102,8 @@ var a int = 42
 var b uint = 100
 var c int64 = -5000
 f := 42 // Another way to more cleanly define a new variable
+f := 42 // Does not work since f is already defined
+f = 23 // But we can update it!
 fmt.Println(a, b, c)
 ```
 
@@ -187,9 +194,13 @@ fmt.Println(len(myMap)) // Get the length of the map
 
 ```go
 var x int = 10
+
 var p *int = &x // p holds memory address of x
+
 fmt.Println(*p) // Dereferencing - prints 10
+
 *p = 20 // Modify value through pointer
+
 fmt.Println(x) // Prints 20
 ```
 
@@ -214,13 +225,18 @@ var slice []int        // nil
 var m map[string]int   // nil
 var c chan int         // nil
 ```
+
 ---
-class: center, middle
+
+class: center, middle, inverse
 # Structs in Go
+
 ---
+
 ## Basics of Structs
 - Custom data types with named fields
 - Used to define objects with multiple properties
+
 ```go
 type UrlResponse struct {
     Url string
@@ -228,16 +244,21 @@ type UrlResponse struct {
     ResponseBody string
     Error string
 }
-response := UrlResponse{Url: "https://example.com", StatusCode: 200, ResponseBody: "Hello, World!", Error: ""}
+response := UrlResponse{
+    Url: "https://example.com",
+    StatusCode: 200,
+    ResponseBody: "Hello, World!",
+    Error: ""
+}
 fmt.Println(response.Url, response.StatusCode)
 ```
 
 ---
 
 ## Ways to Initialize Structs
-- Go offers multiple ways to initialize structs without constructors:
 
-1. **Field names (most readable)**
+#### **Field names (most readable)**
+
 ```go
 response := UrlResponse{
     Url: "https://example.com",
@@ -247,28 +268,18 @@ response := UrlResponse{
 }
 ```
 
-2. **Positional initialization (order matters)**
-```go
-response := UrlResponse{"https://example.com", 200, "Success", ""}
-```
+#### **Empty initialization with zero values**
 
-3. **Empty initialization with zero values**
 ```go
 var response UrlResponse
 // All fields will have their zero values
 ```
 
-4. **Partial initialization (remaining fields get zero values)**
+#### **Partial initialization (remaining fields get zero values)**
+
 ```go
 response := UrlResponse{Url: "https://example.com"}
 // StatusCode = 0, ResponseBody = "", Error = ""
-```
-
-5. **New operator (returns a pointer)**
-```go
-responsePtr := new(UrlResponse)
-// All fields have zero values
-responsePtr.Url = "https://example.com"
 ```
 
 <!-- ---
@@ -302,11 +313,14 @@ func main() {
 
 --- -->
 
+---
+
 ## Public and Private Fields
 - Visibility of fields in Go is determined by their casing:
 - **Public**: Fields starting with an uppercase letter are accessible outside the package.
 - **Private**: Fields starting with a lowercase letter are only accessible within the same package.
 - Private fields promote encapsulation and better struct design.
+
 ```go
 type UrlResponse struct {
     Url string // Public field
@@ -417,7 +431,7 @@ func main() {
 
 
 ---
-class: center, middle
+class: center, middle, inverse
 
 ## Golang good practices
 
@@ -427,14 +441,192 @@ class: center, middle
 
 ## Error handing
 
-- TODO
+- You should not ignore errors
 
+```go
+config, err := cfg.ReadConfig("config.json")
+if err != nil{
+    // Logs the error and kills the process
+    fmt.Fatalf("Error reading config:",err)
+}
+
+user, err := db.FindUser("username")
+if err != nil {
+    fmt.Println("error reading user", err)
+    return err
+}
+
+store, err := db.FindStore(user.StoreId)
+if err != nil {
+    return fmt.Errorf("error finding store: %s", err.Error())
+}
+```
 
 ---
 
 ##  Defer
 
-- TODO
+- Runs when the method ends
+- Helps the programmer make less mistakes in leaving things open
+- Reduces the risk of memory leaks
+
+```go
+func ReadConfig(filename string) Config {
+    file, err := os.Open("config.json")
+    if err != nil{
+        fmt.Fatalf("Error reading config:",err)
+    }
+    defer file.Close()
+
+    // Parsing file logic
+}
+```
+
+---
+
+## Handle errors first
+
+```go
+func (g *Gopher) WriteTo(w io.Writer) (size int64, err error) {
+    err = binary.Write(w, binary.LittleEndian, int32(len(g.Name)))
+    if err == nil {
+        size += 4
+        var n int
+        n, err = w.Write([]byte(g.Name))
+        size += int64(n)
+        if err == nil {
+            err = binary.Write(w, binary.LittleEndian, int64(g.AgeYears))
+            if err == nil {
+                size += 4
+            }
+            return
+        }
+        return
+    }
+    return
+}
+```
+
+---
+
+## Handle errors first
+
+```go
+func (g *Gopher) WriteTo(w io.Writer) (size int64, err error) {
+    err = binary.Write(w, binary.LittleEndian, int32(len(g.Name)))
+    if err != nil {
+        return
+    }
+    size += 4
+    n, err := w.Write([]byte(g.Name))
+    size += int64(n)
+    if err != nil {
+        return
+    }
+    err = binary.Write(w, binary.LittleEndian, int64(g.AgeYears))
+    if err == nil {
+        size += 4
+    }
+    return
+}
+```
+
+
+---
+
+class: center, middle, inverse
+
+## Flow control
+
+
+---
+
+## Loops
+
+```go
+// Standard ranged loop
+for i := range 30 {
+    fmt.Println(i)
+}
+
+// While-like loop
+sum := 1
+for sum < 1000 {
+    sum += sum
+}
+
+// Infinite loop
+for {
+    // Do something repeatedly
+    if condition {
+        break    // Exit the loop
+    }
+    if otherCondition {
+        continue // Skip to next iteration
+    }
+}
+
+// Iterating over collections
+fruits := []string{"apple", "banana", "cherry"}
+for i, fruit := range fruits {
+    fmt.Printf("Index: %d, Value: %s\n", i, fruit)
+}
+
+```
+
+---
+
+## If/Else
+
+Go's conditional statements support initialization:
+
+```go
+// Basic if statement
+if x > 10 {
+    fmt.Println("x is greater than 10")
+}
+
+// If/else statement
+if score >= 90 {
+    fmt.Println("Grade: A")
+} else if score >= 80 {
+    fmt.Println("Grade: B")
+} else {
+    fmt.Println("Grade: F")
+}
+
+```
+
+---
+
+## Switch Case
+
+Go's switch is more flexible than in other languages:
+
+```go
+// Basic switch
+switch day {
+case "Monday":
+    fmt.Println("Start of work week")
+case "Friday":
+    fmt.Println("End of work week")
+case "Saturday", "Sunday": // Multiple cases
+    fmt.Println("Weekend")
+default:
+    fmt.Println("Midweek")
+}
+
+
+// Switch without expression (like if/else)
+switch {
+case hour < 12:
+    fmt.Println("Good morning")
+case hour < 17:
+    fmt.Println("Good afternoon")
+default:
+    fmt.Println("Good evening")
+}
+```
 
 ---
 
@@ -444,28 +636,88 @@ class: center, middle, inverse
 
 ---
 
-## Running your program
+## Useful Commands
 
-- Beware for pointer receiver!
-
----
-
-## Testing your program
-
-- Beware for pointer receiver!
-
----
-
-## Building your program
-
-- Beware for pointer receiver!
+- `go help` - Shows help information for Go commands
+- `go version` - Displays the installed Go version
+- `go env` - Shows Go environment variables
+- `go mod init [module-path]` - Initializes a new module
+- `go mod tidy` - Adds missing dependencies and removes unused ones
+- `go get [package]` - Downloads and installs packages
+- `go list` - Lists packages or modules
+- `go doc [package]` - Shows documentation for packages
 
 ---
 
-## Other useful commands
+## Running Your Program
 
-- race
-- benchmark
+```bash
+# Run the main package in current directory
+go run .
+
+# Run specific file(s)
+go run main.go helper.go
+
+```
+
+---
+
+## Testing Your Program
+
+```bash
+# Run all tests in current package
+go test
+
+# Run tests with verbose output
+go test -v
+
+# Run specific test function
+go test -run TestMyFunction
+```
+
+---
+
+## Building Your Program
+
+```bash
+# Build for current platform
+go build
+
+# Cross-compile for different OS/architecture
+GOOS=linux GOARCH=amd64 go build
+
+# Build to specific output file
+go build -o myapp
+```
+
+---
+
+## Other Useful Commands
+
+#### Race Conditions Detection
+
+```bash
+# Run with race detector
+go run -race .
+
+# Test with race detector
+go test -race
+```
+- Identifies data races in your concurrent Go programs
+- Should be used during development and testing
+
+#### Benchmark
+
+```bash
+# Run benchmarks
+go test -bench=.
+
+# Run benchmarks with memory allocation stats
+go test -bench=. -benchmem
+```
+
+- Measures performance of your code
+- Helps identify bottlenecks and optimization opportunities
 
 ---
 
@@ -554,8 +806,6 @@ class: center, middle, inverse
 
 #### Let's talk about Goroutines
 
-https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7f5c
-
 ---
 
 ## Concurrency?
@@ -628,7 +878,8 @@ func MultipleHeavyComputation() {
     for i := range 30 {
         // GO: with anonymous function call
         go func() {
-            results = append(results)
+            res := HeavyComputation()
+            results = append(results, res)
         }()
 
         // GO: with just the method call
@@ -661,7 +912,7 @@ func MultipleHeavyComputation(size int) []uint {
             
             // Store at specific index to avoid race conditions
             results[index] = result
-        }() // Pass i as parameter to avoid closure issues
+        }()
     }
     
     // Wait for all goroutines to complete
@@ -670,16 +921,6 @@ func MultipleHeavyComputation(size int) []uint {
     return results
 }
 ```
-
-
----
-
-## Mini Project: Part 2
-
-#### Enabling concurrency in our solution
-
-
-
 
 ---
 
@@ -691,9 +932,7 @@ class: center, middle, inverse
 
 ---
 
-## Common Parallelism Challenges
-
-TODO: imagens sobre condicoes de corrida
+## Common Concurrency Challenges
 
 - **Hard to test**: Concurrency is hard to test and debug, since bugs are usually non deterministic and might airse from specific timings
 - **Shared Resource Management**: Traditional threading uses mutex locks, semaphores, and complex synchronization solution
@@ -709,19 +948,17 @@ TODO: imagens sobre condicoes de corrida
     - Avoids complex locking mechanisms, reducing the proneness to deadlocks
 - **Design for concurrency**:
     - Break problems into independent, concurrent tasks
-    - Create clear ownership boundaries for data
     - Use message passing patterns instead of shared memory when appropriate
 - **Balance concurrency levels**:
     - Too few concurrent tasks underutilizes resources
     - Too many can lead to context switching overhead
     - Match concurrency to available hardware resources
-    - Consider workload characteristics when determining optimal concurrency
 
 ---
 
 ## Solutions that Go provides
 
-- Golang supports traditional mechanisms such as mutex, semaphores and condition variables
+- Golang supports traditional mechanisms such as mutex and condition variables
 - Golang has channels, which are a way for goroutines to communicate
 - This allows us to effectively improve our concurrency design by sharing through communication
 - With this pattern, we are reducing the proneness to deadlocks and race conditions
@@ -750,7 +987,9 @@ class: center, middle, inverse
 
 ```go
 go func() { ch <- 42 }()  // Sends value to channel
+go func() { ch <- 12345 }()  // Sends value to channel
 value := <-ch            // Receives value from channel
+<-ch            // Receives value from channel
 ```
 
 - Safe for coordination between multiple goroutines
@@ -831,11 +1070,21 @@ func worker(done <-chan struct{}, work <-chan int) {
 }
 ```
 
+
+---
+
+## Mini Project: Part 2
+
+#### Enabling concurrency in our solution
+
+
+
 ---
 
 ## Other amazing topics worth looking into
 
 - Modules
+- [https://go.dev/talks/2014/gotham-context.slide#1](Contexts)
 - Struct composition
 - Interfaces
 - Reflection
@@ -844,6 +1093,7 @@ func worker(done <-chan struct{}, work <-chan int) {
 
 ## Useful links
 
+- https://go.dev/talks/2013/bestpractices.slide
 - https://divan.dev/posts/go_concurrency_visualize/
 
 
