@@ -42,21 +42,44 @@ class: center, middle, inverse
 #### Ask questions whenever you want
 
 ---
-### What is Golang?
-- A statically-typed, compiled programming language **designed by Google** in 2007
-- Created by Robert Griesemer, Rob Pike, and Ken Thompson
-- Focuses on **simplicity**, **efficiency**, and **built-in concurrency**
-- Combines the performance of compiled languages with the ease of dynamically-typed languages
-- Features garbage collection, memory safety, and structural typing
+class: middle
+### The History of Go
+
+- Created by Robert Griesemer, Rob Pike, and Ken Thompson at Google
+- Design began in 2007, first released publicly in 2009
+- Became open source with version 1.0 in March 2012
+
+```go
+    // A language born out of frustration with existing systems
+if (C++ || Java) {
+    fmt.Println("Too complex and verbose")
+} else if (Python || Ruby) {
+    fmt.Println("Dynamic typing and interpreter limitations")
+}
+
+```
+---
+class: middle
+### Why Go Was Created
+
+Designed to address software development at Google's scale
+Key pain points targeted:
+
+- Slow build times with large codebases
+- Unwieldy dependency management
+- High complexity in system languages
+- Poor support for multicore processing
 
 ---
-### Why Golang?
-- **Fast compilation** and execution
-- **Built-in concurrency** with Goroutines and Channels
-- **Simple syntax** with reduced complexity compared to other languages
-- **Strong standard library** that handles many common tasks
-- **Cross-platform** support with easy deployment
-- **Static typing** and memory safety without excessive verbosity
+class: middle
+### Design Philosophy
+
+- Simplicity as a core value
+- Fast compilation and efficient execution
+- Built-in concurrency through goroutines and channels
+- Strong but pragmatic type system
+- Automatic memory management without GC pauses
+- Designed for modern networked and multicore computing
 
 ---
 ### Golang 101
@@ -74,15 +97,19 @@ class: center, middle, inverse
 - **Zero values** for all variables (no uninitialized variables)
 
 ---
-### Where is Golang Used?
-- **Cloud Infrastructure**: Powers many cloud-native technologies
-- **DevOps and Infrastructure as Code**:
-  - **Terraform**: HashiCorp's infrastructure as code tool
-  - **Docker**: Container platform's core is written in Go
-  - **Kubernetes**: Container orchestration system developed by Google
-- **Web Services**: High-performance API servers and microservices
-- **Network Programming**: Excellent for building distributed systems
-- **Command-line Tools**: Fast execution and single binary deployment
+
+class: middle
+
+### Go Today
+
+- Powers critical infrastructure worldwide:
+    - Docker, Kubernetes, Prometheus
+    - Worten, Vertsa Play, Cloudflare, Uber, Twitch
+    - Many cloud-native technologies
+
+- Growing ecosystem of libraries and tools
+- Major releases approximately every six months
+- Continues commitment to backward compatibility
 
 ---
 class: center, middle, inverse
