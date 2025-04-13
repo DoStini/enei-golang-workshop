@@ -857,68 +857,89 @@ class: center, middle, inverse
 </div>
 
 ---
-
+class: middle
 ## How to use goroutines?
 
-```go
-// Heavy Syncronous Methods
-func HeavyComputation() int {
-    time.Sleep(2 * time.Seconds)
-    return rand.Int()
+- Prefix your methods with go to launch the function as a goroutine
+- You can run anonymous functions as goroutines
+- Goroutines run concurrently with the rest of your program
+- Main program doesn't wait for goroutines to complete
+
+``` go
+func main(){    
+
+    // You can run named functions as goroutines prefixing them with go
+    go doSomething()
+
+    // Or you can run 1 off anonymous functions
+    go func(){
+        compute()
+    }()
 }
+```
+---
+class: middle, center
 
-func SendAlert() int {
-    emailer.SendMail()
-}
+## Demo time!
 
-
-// A heavy loop that iterates over multiple
-func MultipleHeavyComputation() {
-    results := []int{}
-    for i := range 30 {
-        // GO: with anonymous function call
-        go func() {
-            res := HeavyComputation()
-            results = append(results, res)
-        }()
-
-        // GO: with just the method call
-        go SendAlert()
-    }
-}
-
+```bash
+cd project/examples/concurrency/01_routines
 ```
 
+---
+class: middle
+### The Problem with Unsynchronized Goroutines
+
+``` go
+func main(){    
+    
+    doSomething()
+    
+    // The program blocks and waits for doSomething to finish
+    fmt.Println("This will only print after doSomething() finishes")
+        
+    go doSomethingAsync()
+    // The program DOESN'T block and continues execution immediately
+    fmt.Println("This will likely print BEFORE doSomethingAsync() finishes")
+    
+    // Without proper synchronization, the program might exit
+    // before goroutines complete their work
+}
+```
 
 ---
+class: center, middle
+## So how do we Synchronize goroutines?
+---
+class: middle
 
-## How to coordinate goroutines?
+## By using waitgroups
+
+- A WaitGroup is a counter that helps coordinate multiple goroutines
+- Use Add(n) to increment the counter before starting goroutines
+- Each goroutine calls Done() when it completes its work
+- The main goroutine uses Wait() to block until all goroutines finish
+
 
 ```go
-func MultipleHeavyComputation(size int) []uint {
-    var wg sync.WaitGroup
-    // Set initial WaitGroup counter to match total goroutines
-    wg.Add(size)
-    
-    results := make([]uint, size) // Pre-allocate slice with proper size
-    
-    for i := range size {
-        // GO: with anonymous function call
-        go func() {
-            // Ensure we decrement counter when done
-            defer wg.Done()
+func main() {
+    // We define a waitgroup from the sync package
+    var wg sync.Waitgroup
 
-            result := HeavyComputation(index)
-            
-            // Store at specific index to avoid race conditions
-            results[index] = result
-        }()
+    // Increment counter before launching the goroutine
+    wg.Add(1)
+    go func(){
+        // Use defer to ensure Done() is always called when the function eturns
+        defer wg.Done()
+        doSomething()
     }
     
-    // Wait for all goroutines to complete
+    // Wait blocks until the WaitGroup counter reaches zero
+    // If Done() is never called, this will block forever (deadlock)
+
     wg.Wait()
+    fmt.Println("All goroutines completed!")
     
-    return results
 }
 ```
 
