@@ -749,9 +749,7 @@ A lightweight utility tool that validates URLs by checking their response status
 
 - Checks HTTP response status codes for a collection of URLs
 - Stores results in a map with URL as the key
-- Returns both status code and a descriptive message for each URL
-- Simple interface for batch URL validation
-
+- Validates correct URL's
 ---
 
 ## URL Checker Project
@@ -764,39 +762,22 @@ A lightweight utility tool that validates URLs by checking their response status
 #### Output
 - Map data structure where:
   - Key: URL string
-  - Value: Object containing:
-    - `statusCode`: HTTP response status code (e.g., 200, 404, 500)
-    - `message`: Description of the result (e.g., "OK", "Not Found", "Server Error")
+  - Value: True or false
 
 ---
 
 ## URL Checker Project
 
-#### Implementation Details
-- Uses HTTP requests to check URLs
-- Store various HTTP status codes appropriately
-- Implements proper error handling for network issues or invalid URLs
+#### Tasks
 
-#### Use Cases
-- Website monitoring
-- Link validation in web applications
-- API endpoint verification
-
----
-
-## URL Checker Project
-
-#### Implementation Details
-- Uses asynchronous HTTP requests to check URLs
-- Store various HTTP status codes appropriately
-- Implements proper error handling for network issues or invalid URLs
-- Designed for efficiency with multiple URL validations
-
-#### Use Cases
-- Website monitoring
-- Link validation in web applications
-- API endpoint verification
-- Content availability checking
+- Define a map of `string` to `bool`
+- Loop through the URL's
+- Defer the closure of `resp.Body`
+- Do error handling
+- Store true in the map if `200`, false otherwise
+- Print the result map directly
+- Print the result map with `+v` formatting
+- Iterate over the map printing key and value
 
 ---
 
@@ -1105,7 +1086,7 @@ func worker(done <-chan struct{}, work <-chan int) {
 ## Other amazing topics worth looking into
 
 - Modules
-- [https://go.dev/talks/2014/gotham-context.slide#1](Contexts)
+- Contexts
 - Struct composition
 - Interfaces
 - Reflection
@@ -1114,8 +1095,17 @@ func worker(done <-chan struct{}, work <-chan int) {
 
 ## Useful links
 
+- https://go.dev
+- https://www.reddit.com/r/golang
+- https://blog.cubed.run/the-cards-of-concurrency-in-go-0d7582cecb79
+- https://go.dev/blog/waza-talk
 - https://go.dev/talks/2013/bestpractices.slide
 - https://divan.dev/posts/go_concurrency_visualize/
 
 
---- 
+---
+
+## Connect with Us
+
+- [André Moreira](https://www.linkedin.com/in/andremoreira9/)
+- [Eduardo Guedes](https://www.linkedin.com/in/eduardo-gomero-96179215b/)
