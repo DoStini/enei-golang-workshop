@@ -511,7 +511,7 @@ func ReadConfig(filename string) Config {
 
 ---
 
-## Handle errors first
+## Nested Logic if no error: Wrong! ❌
 
 ```go
 func (g *Gopher) WriteTo(w io.Writer) (size int64, err error) {
@@ -536,7 +536,7 @@ func (g *Gopher) WriteTo(w io.Writer) (size int64, err error) {
 
 ---
 
-## Handle errors first
+## Handle errors first: Correct ✅
 
 ```go
 func (g *Gopher) WriteTo(w io.Writer) (size int64, err error) {
@@ -544,16 +544,19 @@ func (g *Gopher) WriteTo(w io.Writer) (size int64, err error) {
     if err != nil {
         return
     }
+
     size += 4
     n, err := w.Write([]byte(g.Name))
     size += int64(n)
     if err != nil {
         return
     }
+
     err = binary.Write(w, binary.LittleEndian, int64(g.AgeYears))
     if err == nil {
         size += 4
     }
+
     return
 }
 ```
@@ -799,15 +802,19 @@ A lightweight utility tool that validates URLs by checking their response status
 
 ## URL Checker Project
 
-#### Implementation Details
-- Uses HTTP requests to check URLs
-- Store various HTTP status codes appropriately
-- Implements proper error handling for network issues or invalid URLs
+#### Tasks
 
-#### Use Cases
-- Website monitoring
-- Link validation in web applications
-- API endpoint verification
+- Solve it in the main method:
+    - Define a map of `string` to `bool`
+    - Loop through the URL's
+    - Defer the closure of `resp.Body`
+    - Do error handling
+    - Store true in the map if `200`, false otherwise
+    - Print the result map directly
+    - Print the result map with `+v` formatting
+    - Iterate over the map printing key and value
+- Refactor to a method to make it testable
+- Run the tests and validate edge case scenarios
 
 ---
 
