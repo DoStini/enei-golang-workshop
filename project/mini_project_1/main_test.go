@@ -1,10 +1,8 @@
 package main
 
-import (
-	"testing"
-)
+import "testing"
 
-func TestIterateOverUrlSync(t *testing.T) {
+func TestCheckUrls(t *testing.T) {
 	urls := []string{
 		"https://www.google.com",
 		"https://www.facebook.com",
@@ -20,47 +18,32 @@ func TestIterateOverUrlSync(t *testing.T) {
 		"https://www.twitter.com":     false,
 	}
 
-	got := iterateOverUrlSync(urls)
+	got := CheckUrls(urls)
 
 	for key, value := range expected {
 		if got[key] != value {
-			t.Errorf("got %+v, expected %+v", got[key], value)
+			t.Errorf("key %s :got %+v, expected %+v", key, got[key], value)
 		}
 	}
 }
 
-func TestIterateOverUrlAsync(t *testing.T) {
+func TestCheckUrlsMalformed(t *testing.T) {
 	urls := []string{
-		"https://www.google.com",
-		"https://www.facebook.com",
-		"https://www.example.com",
-		"https://www.twitter.com",
-		"https://blog.gypsydave5.com",
+		"malfored url ",
+		"https://",
+		"what://?asd",
 	}
 	expected := map[string]bool{
-		"https://www.google.com":      true,
-		"https://www.facebook.com":    true,
-		"https://www.example.com":     true,
-		"https://blog.gypsydave5.com": true,
-		"https://www.twitter.com":     false,
+		"malfored url ": false,
+		"https://":      false,
+		"what://?asd":   false,
 	}
 
-	got := iterateOverUrlAsync(urls)
+	got := CheckUrls(urls)
 
 	for key, value := range expected {
 		if got[key] != value {
-			t.Errorf("got %+v, expected %+v", got[key], value)
+			t.Errorf("key %s :got %+v, expected %+v", key, got[key], value)
 		}
 	}
-}
-func TestIterateSyncWithSleep(t *testing.T) {
-	iterateSyncWithSleep()
-}
-
-func TestIterateAsyncWithSleepWithoutWaitGroup(t *testing.T) {
-	iterateAsyncWithSleepWithoutWaitGroup()
-}
-
-func TestIterateAsyncWithSleepWithWaitGroup(t *testing.T) {
-	iterateAsyncWithSleepWithWaitGroup()
 }

@@ -1084,7 +1084,7 @@ func worker(done <-chan struct{}, work <-chan int) {
 ## Other amazing topics worth looking into
 
 - Modules
-- [https://go.dev/talks/2014/gotham-context.slide#1](Contexts)
+- Contexts
 - Struct composition
 - Interfaces
 - Reflection
@@ -1093,8 +1093,17 @@ func worker(done <-chan struct{}, work <-chan int) {
 
 ## Useful links
 
+- https://go.dev
+- https://www.reddit.com/r/golang
+- https://blog.cubed.run/the-cards-of-concurrency-in-go-0d7582cecb79
+- https://go.dev/blog/waza-talk
 - https://go.dev/talks/2013/bestpractices.slide
 - https://divan.dev/posts/go_concurrency_visualize/
 
 
---- 
+---
+
+## Connect with Us
+
+- [André Moreira](https://www.linkedin.com/in/andremoreira9/)
+- [Eduardo Guedes](https://www.linkedin.com/in/eduardo-gomero-96179215b/)
