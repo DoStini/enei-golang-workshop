@@ -1,5 +1,5 @@
-class: center, middle, inverse, small-images
 
+class: center, middle, inverse, small-images
 # Go Simple! Go Fast!
 
 ### An introduction to Golang and concurrency
@@ -749,7 +749,9 @@ A lightweight utility tool that validates URLs by checking their response status
 
 - Checks HTTP response status codes for a collection of URLs
 - Stores results in a map with URL as the key
-- Validates correct URL's
+- Returns both status code and a descriptive message for each URL
+- Simple interface for batch URL validation
+
 ---
 
 ## URL Checker Project
@@ -762,22 +764,39 @@ A lightweight utility tool that validates URLs by checking their response status
 #### Output
 - Map data structure where:
   - Key: URL string
-  - Value: True or false
+  - Value: Object containing:
+    - `statusCode`: HTTP response status code (e.g., 200, 404, 500)
+    - `message`: Description of the result (e.g., "OK", "Not Found", "Server Error")
 
 ---
 
 ## URL Checker Project
 
-#### Tasks
+#### Implementation Details
+- Uses HTTP requests to check URLs
+- Store various HTTP status codes appropriately
+- Implements proper error handling for network issues or invalid URLs
 
-- Define a map of `string` to `bool`
-- Loop through the URL's
-- Defer the closure of `resp.Body`
-- Do error handling
-- Store true in the map if `200`, false otherwise
-- Print the result map directly
-- Print the result map with `+v` formatting
-- Iterate over the map printing key and value
+#### Use Cases
+- Website monitoring
+- Link validation in web applications
+- API endpoint verification
+
+---
+
+## URL Checker Project
+
+#### Implementation Details
+- Uses asynchronous HTTP requests to check URLs
+- Store various HTTP status codes appropriately
+- Implements proper error handling for network issues or invalid URLs
+- Designed for efficiency with multiple URL validations
+
+#### Use Cases
+- Website monitoring
+- Link validation in web applications
+- API endpoint verification
+- Content availability checking
 
 ---
 
@@ -957,7 +976,156 @@ go run main.go -wg
 ```
 
 ---
+class: middle, center
+## Concurrency biggest problem?
 
+A programmer had a problem. He thought to himself, "I know, l'll solve it with threads!". has Now problems. two he
+
+-r/ProgrammerHumor
+
+---
+class: middle
+## The problem with race conditions
+
+- Race condition: When multiple goroutines access shared data and at least one modifies it
+- The final result depends on the precise timing of operations
+- Creates unpredictable behavior that's difficult to debug
+- Can't be reliably reproduced or tested
+
+```go
+func main(){
+    count := 0
+
+    // This is NOT thread-safe
+    for range := 10 {
+
+        go func() {
+            // Multiple goroutines might read the same value
+            // before any of them have a chance to write back
+            count++ // Reading and writing without synchronization
+        }()
+
+    }
+}
+```
+
+---
+class: center, middle
+
+### Don't communicate by sharing memory, share memory by communicating
+
+-Rob Pike, one of the co-creators of Go.
+
+---
+class: middle
+
+## Channels: Communication as Synchronization
+
+- Channels are typed conduits for sending and receiving values between goroutines
+- They handle both data transfer and synchronization
+- Designed to avoid race conditions through message passing
+- Make concurrent programming safer and more predictable
+
+``` go
+
+func main(){
+
+    // Create an unbuffered channel
+    ch := make(chan int)
+
+    // Send a value (blocks until someone receives)
+    go func() { ch <- 42 }()
+
+    // Receive a value (blocks until someone sends)
+    value := <-ch
+    fmt.Println(value)  // Prints: 42
+
+}
+```
+<div style="text-align: right; font-size: 0.8em;">
+<a href="https://divan.dev/posts/go_concurrency_visualize/">
+ Vizualizing concurrency
+</a>
+</div>
+
+---
+
+class: middle
+## Demo time!
+```bash
+cd project/examples/concurrency/03_channels
+```
+Run the program with race conditions
+``` bash
+go run main.go
+```
+Run the program with channels
+```bash
+go run main.go -chan
+```
+
+---
+
+class: middle
+
+## Channels vs. Traditional Synchronization (Mutexes)
+
+- Channels: Best for communicating between goroutines
+    - Simple data passing and signaling
+    - When control flow is tied to data flow
+    - Complex coordination patterns (workers, pipelines)
+
+- Mutex: Best for protecting shared state
+    - Simpler for read/write access to shared data
+    - More efficient for frequent, brief operations
+    - When performance is critical for simple shared resources
+
+---
+class: middle
+
+## Using mutexes
+
+```go 
+func main(){
+    // Protecting shared state with a mutex
+    var mu sync.Mutex
+    count := 0
+
+    for range := 10{
+        // Safe increment with mutex
+        go func(){
+            // Lock the mutex before accessing the data
+
+            mu.Lock()
+            count++
+            mu.Unlock() // always unlock or you will cause a deadlock
+
+            // A common best pratice is to always defer the Unlock
+        }
+    }
+
+}
+
+```
+
+---
+class: middle
+## Demo time!
+
+```bash
+cd project/examples/concurrency/04_mutexes
+```
+Run the program using channels for cache
+```bash
+go run main.go
+```
+Run the program using mutex for cache
+
+```bash
+go run main.go -mutex
+```
+
+---
 
 class: center, middle, inverse
 
@@ -1119,7 +1287,7 @@ func worker(done <-chan struct{}, work <-chan int) {
 ## Other amazing topics worth looking into
 
 - Modules
-- Contexts
+- [https://go.dev/talks/2014/gotham-context.slide#1](Contexts)
 - Struct composition
 - Interfaces
 - Reflection
@@ -1128,17 +1296,8 @@ func worker(done <-chan struct{}, work <-chan int) {
 
 ## Useful links
 
-- https://go.dev
-- https://www.reddit.com/r/golang
-- https://blog.cubed.run/the-cards-of-concurrency-in-go-0d7582cecb79
-- https://go.dev/blog/waza-talk
 - https://go.dev/talks/2013/bestpractices.slide
 - https://divan.dev/posts/go_concurrency_visualize/
 
 
----
-
-## Connect with Us
-
-- [André Moreira](https://www.linkedin.com/in/andremoreira9/)
-- [Eduardo Guedes](https://www.linkedin.com/in/eduardo-gomero-96179215b/)
+--- 
