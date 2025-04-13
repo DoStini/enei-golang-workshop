@@ -784,22 +784,6 @@ A lightweight utility tool that validates URLs by checking their response status
 
 ---
 
-## URL Checker Project
-
-#### Implementation Details
-- Uses asynchronous HTTP requests to check URLs
-- Store various HTTP status codes appropriately
-- Implements proper error handling for network issues or invalid URLs
-- Designed for efficiency with multiple URL validations
-
-#### Use Cases
-- Website monitoring
-- Link validation in web applications
-- API endpoint verification
-- Content availability checking
-
----
-
 class: center, middle, inverse
 
 ## Concurrency
@@ -1057,7 +1041,130 @@ func main(){
 
 }
 ```
+---
 
+## Unbuffered Channels
+
+- Created with ch := make(chan int) - no capacity specified
+- Provide synchronous communication between goroutines
+- Sender blocks until a receiver takes the value
+- Receiver blocks until a sender provides a value
+- Act as both data transfer and synchronization mechanism
+
+```go
+go func() { ch <- 42 }()    // Sender blocks until someone receives
+go func() { ch <- 12345 }() // Another sender also blocks
+value := <-ch               // Receives one value (either 42 or 12345)
+<-ch                        // Receives the other value
+```
+---
+
+class: middle
+## Unbuffered Channels
+- Safe for coordination between multiple goroutines
+
+```go
+func main(){
+    ch := make(chan int)
+
+    // Producer sends exactly one value
+    go func() {
+        ch <- 42 // This goroutine will block until one worker receives
+    }()
+    
+    // Only one worker will receive the value
+    go func() { // Worker 1
+        value := <-ch // Might receive the value
+        fmt.Println("Worker 1 got:", value)
+    }()
+    
+    go func() { // Worker 2
+        value := <-ch // Or this worker might receive the value
+        fmt.Println("Worker 2 got:", value)
+    }()
+}
+
+```
+
+---
+
+## Buffered Channels
+
+- Created with `ch := make(chan int, capacity)` - specify buffer size
+- Provide asynchronous communication up to buffer capacity
+- Sender only blocks when the buffer is full
+- Receiver blocks only when the buffer is empty
+- Allow for temporary mismatch between send and receive operations
+```go
+ch := make(chan int, 2) // Channel with buffer capacity of 2
+ch <- 1                 // Doesn't block (buffer has space)
+ch <- 2                 // Doesn't block (buffer still has space)
+ch <- 3                 // Blocks until someone reads and makes space
+```
+
+- Useful for:
+    -  Batch processing without forcing immediate consumption
+    - Handling bursts of data with predictable upper limits
+    - Decoupling producers and consumers when timing isn't critical
+
+---
+
+## Using select
+
+Select can be used for multiple channel operations:
+
+- Works like a switch statement but for channel operations
+- Allows waiting on multiple channel operations simultaneously
+- Blocks until one of the cases can proceed
+- If multiple cases are ready, one is chosen randomly
+- Non-blocking operations possible with `default` case
+
+```go
+select {
+
+    case msg1 := <-channel1:
+    fmt.Println("Received from channel 1:", msg1)
+
+    case msg2 := <-channel2:
+    fmt.Println("Received from channel 2:", msg2)
+
+    // Without default case the select if a blocking operation
+    // it will block until one of the channels is filled
+    default:
+    fmt.Println("This will run and finish the select statement")
+}
+
+```
+---
+
+## Avoiding Deadlocks
+- Always provide a way to exit goroutine loops
+- Close channels when done with them
+- Use "done" channels to signal completion
+- Consider context.Context for timeout/cancellation
+
+```go
+func worker(done <-chan struct{}, work <-chan int) {
+    for {
+        select {
+        case <-done:
+            return  // Exit cleanly when signaled
+        case task, ok := <-work:
+            if !ok {
+                return  // Channel closed, exit gracefully
+            }
+            process(task)
+        }
+    }
+}
+// Usage
+done := make(chan struct{})
+work := make(chan int)
+go worker(done, work)
+
+// Signal termination
+close(done)  // All receivers will get the zero value
+```
 ---
 
 class: middle
@@ -1134,6 +1241,8 @@ Run the program using mutex for cache
 ```bash
 go run main.go -mutex
 ```
+
+
 
 ---
 
@@ -1239,153 +1348,6 @@ for res := range resultCh {
     result[res.url] = res.status
 }
 ```
----
-## Common Concurrency Challenges
-
-- **Hard to test**: Concurrency is hard to test and debug, since bugs are usually non deterministic and might airse from specific timings
-- **Shared Resource Management**: Traditional threading uses mutex locks, semaphores, and complex synchronization solution
-- **Deadlocks & Livelocks**: Complex lock dependencies can lead to system freezes if not properly designed
-- **Synchronization Overhead**: Badly designed locking mechanisms can create performance bottlenecks
-
----
-
-### Concurrency Good Practices
-
-- **Minimize shared state**:
-    - Share by communicating, not by sharing memory
-    - Avoids complex locking mechanisms, reducing the proneness to deadlocks
-- **Design for concurrency**:
-    - Break problems into independent, concurrent tasks
-    - Use message passing patterns instead of shared memory when appropriate
-- **Balance concurrency levels**:
-    - Too few concurrent tasks underutilizes resources
-    - Too many can lead to context switching overhead
-    - Match concurrency to available hardware resources
-
----
-
-## Solutions that Go provides
-
-- Golang supports traditional mechanisms such as mutex and condition variables
-- Golang has channels, which are a way for goroutines to communicate
-- This allows us to effectively improve our concurrency design by sharing through communication
-- With this pattern, we are reducing the proneness to deadlocks and race conditions
-- Channels make complex concurrency patterns easier to implement and understand
-
-
-
-
-
----
-
-class: center, middle, inverse
-
-## More 
-
-#### Channels and other syncronization solutions
-
-
----
-
-
-## Unbuffered Channels
-
-- Created with `ch := make(chan int)`
-- Synchronous communication: sender blocks until receiver is ready
-
-```go
-go func() { ch <- 42 }()  // Sends value to channel
-go func() { ch <- 12345 }()  // Sends value to channel
-value := <-ch            // Receives value from channel
-<-ch            // Receives value from channel
-```
-
-- Safe for coordination between multiple goroutines
-
-```go
-ch := make(chan int)
-go func() { 
-    ch <- 42 // Sends value to channel
-}()
-
-// One of the following goroutines will read the value 42
-
-// Worker 1
-go func() {
-    value := <-ch
-}()
-
-// Worker 2
-go func() {
-    value := <-ch
-}()
-
-```
-
----
-
-## Buffered Channels
-- Created with `ch := make(chan int, capacity)`
-- Asynchronous until buffer fills: sender only blocks when buffer is full
-- Example:
-  ```go
-  ch := make(chan int, 2)
-  ch <- 1  // Doesn't block
-  ch <- 2  // Doesn't block
-  ch <- 3  // Blocks until someone reads from the channel and frees up space
-  ```
-
----
-
-## Using select
-
-Select can be used for multiple channel operations:
-
-- Works like a switch statement but for channel operations
-- Allows waiting on multiple channel operations simultaneously
-- Blocks until one of the cases can proceed
-- If multiple cases are ready, one is chosen randomly
-- Non-blocking operations possible with `default` case
-
-```go
-select {
-case msg1 := <-channel1:
-    fmt.Println("Received from channel 1:", msg1)
-case msg2 := <-channel2:
-    fmt.Println("Received from channel 2:", msg2)
-}
-```
-
----
-
-## Avoiding Deadlocks
-
-- Important to close channels
-- Never leave a goroutine with an infinite for loop
-    - That will lead to goroutine leaks
-    - Always use contexts or done channels to break out of the loop
-
-```go
-func worker(done <-chan struct{}, work <-chan int) {
-  for {
-    select {
-      case <-done:
-        return  // Exit cleanly when done
-      case task := <-work:
-        process(task)
-    }
-  }
-}
-```
-
-
----
-
-## Mini Project: Part 2
-
-#### Enabling concurrency in our solution
-
-
 
 ---
 
