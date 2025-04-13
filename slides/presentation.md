@@ -749,9 +749,7 @@ A lightweight utility tool that validates URLs by checking their response status
 
 - Checks HTTP response status codes for a collection of URLs
 - Stores results in a map with URL as the key
-- Returns both status code and a descriptive message for each URL
-- Simple interface for batch URL validation
-
+- Validates correct URL's
 ---
 
 ## URL Checker Project
@@ -764,39 +762,22 @@ A lightweight utility tool that validates URLs by checking their response status
 #### Output
 - Map data structure where:
   - Key: URL string
-  - Value: Object containing:
-    - `statusCode`: HTTP response status code (e.g., 200, 404, 500)
-    - `message`: Description of the result (e.g., "OK", "Not Found", "Server Error")
+  - Value: True or false
 
 ---
 
 ## URL Checker Project
 
-#### Implementation Details
-- Uses HTTP requests to check URLs
-- Store various HTTP status codes appropriately
-- Implements proper error handling for network issues or invalid URLs
+#### Tasks
 
-#### Use Cases
-- Website monitoring
-- Link validation in web applications
-- API endpoint verification
-
----
-
-## URL Checker Project
-
-#### Implementation Details
-- Uses asynchronous HTTP requests to check URLs
-- Store various HTTP status codes appropriately
-- Implements proper error handling for network issues or invalid URLs
-- Designed for efficiency with multiple URL validations
-
-#### Use Cases
-- Website monitoring
-- Link validation in web applications
-- API endpoint verification
-- Content availability checking
+- Define a map of `string` to `bool`
+- Loop through the URL's
+- Defer the closure of `resp.Body`
+- Do error handling
+- Store true in the map if `200`, false otherwise
+- Print the result map directly
+- Print the result map with `+v` formatting
+- Iterate over the map printing key and value
 
 ---
 
