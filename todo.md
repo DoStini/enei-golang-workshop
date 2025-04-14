@@ -6,8 +6,8 @@
 - [] GOMAXPROCS
 - [] Pointers
 - [] Error Handling
-- [] Goroutines examples
-- [] wait groups
+- [x] Goroutines examples
+- [x] wait groups
 
 # Practical exercise
 
