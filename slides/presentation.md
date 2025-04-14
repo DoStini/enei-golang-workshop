@@ -49,7 +49,6 @@ class: center, middle, inverse
 #### Ask questions whenever you want
 
 ---
-<<<<<<< Updated upstream
 class: middle
 ### The History of Go
 
@@ -77,15 +76,6 @@ Key pain points targeted:
 - Unwieldy dependency management
 - High complexity in system languages
 - Poor support for multicore processing
-=======
-
-### What is Golang?
-- A statically-typed, compiled programming language **designed by Google** in 2007
-- Created by Robert Griesemer, Rob Pike, and Ken Thompson
-- Focuses on **simplicity**, **efficiency**, and **built-in concurrency**
-- Combines the performance of compiled languages with the ease of dynamically-typed languages
-- Features garbage collection, memory safety, and structural typing
->>>>>>> Stashed changes
 
 ---
 class: middle
